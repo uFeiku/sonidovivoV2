@@ -1,0 +1,131 @@
+/* ============================================
+   SONIDO VIVO - Estilos propios
+   Bootstrap hace el trabajo pesado (grillas, botones, formularios).
+   Aquí solo personalizamos la paleta de la marca: fondo oscuro + acento ámbar.
+   ============================================ */
+
+[data-bs-theme="dark"] {
+  --bs-body-bg: #1a1a1a;
+  --bs-body-color: #f5f5f5;
+  --bs-body-font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --bs-border-color: #444;
+  --bs-link-color: #e8a838;
+  --bs-link-color-rgb: 232, 168, 56;
+  --bs-link-hover-color: #c48920;
+  --bs-link-hover-color-rgb: 196, 137, 32;
+}
+
+/* --- Botón principal con el color de la marca --- */
+.btn-primary {
+  --bs-btn-color: #1a1a1a;
+  --bs-btn-bg: #e8a838;
+  --bs-btn-border-color: #e8a838;
+  --bs-btn-hover-color: #1a1a1a;
+  --bs-btn-hover-bg: #c48920;
+  --bs-btn-hover-border-color: #c48920;
+  --bs-btn-active-color: #1a1a1a;
+  --bs-btn-active-bg: #c48920;
+  --bs-btn-active-border-color: #c48920;
+  --bs-btn-disabled-color: #1a1a1a;
+  --bs-btn-disabled-bg: #e8a838;
+  --bs-btn-disabled-border-color: #e8a838;
+  --bs-btn-focus-shadow-rgb: 232, 168, 56;
+}
+
+/* --- Campos de formulario --- */
+.form-control:focus,
+.form-select:focus {
+  border-color: #e8a838;
+  box-shadow: 0 0 0 0.25rem rgba(232, 168, 56, 0.25);
+}
+
+/* --- Barra de navegación --- */
+.barra-sonido {
+  background-color: #242424;
+  border-bottom: 2px solid #e8a838;
+}
+
+.barra-admin {
+  border-bottom-color: #c0392b;
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: #f5f5f5;
+}
+
+.logo span {
+  color: #e8a838;
+}
+
+.barra-sonido .nav-link {
+  color: #c0c0c0;
+}
+
+.barra-sonido .nav-link:hover,
+.barra-sonido .nav-link.active {
+  color: #e8a838;
+}
+
+/* --- Banner de la portada --- */
+.banner {
+  min-height: 320px;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.7)),
+    url("https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=1400") center / cover no-repeat;
+}
+
+.banner h1 {
+  color: #e8a838;
+}
+
+/* --- Tarjetas de producto --- */
+.card {
+  --bs-card-bg: #242424;
+  --bs-card-border-color: #444;
+}
+
+.tarjeta-producto {
+  transition: border-color 0.2s;
+}
+
+.tarjeta-producto:hover {
+  border-color: #e8a838;
+}
+
+.categoria,
+.precio {
+  color: #e8a838;
+}
+
+/* --- Tablas (carrito y administración) --- */
+.table-dark {
+  --bs-table-bg: #242424;
+  --bs-table-striped-bg: #2d2d2d;
+}
+
+.tabla-scroll {
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+/* --- Equipo de desarrollo --- */
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: #e8a838;
+  color: #1a1a1a;
+  font-weight: 700;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- Pie de página --- */
+.pie-pagina {
+  background-color: #242424;
+  border-top: 1px solid #444;
+}
