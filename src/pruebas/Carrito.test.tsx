@@ -7,6 +7,7 @@ import Catalogo from "../paginas/Catalogo";
 import Carrito from "../paginas/Carrito";
 import Navbar from "../componentes/organismos/Navbar";
 import { productos } from "../datos/productos";
+import { formatearPrecio } from "../utilidades/formato";
 
 // MemoryRouter simula el router sin necesitar un navegador real.
 function renderizarTienda() {
@@ -40,6 +41,15 @@ describe("carrito de compras", () => {
 
     expect(screen.getByRole("link", { name: "Carrito (1)" })).toBeInTheDocument();
     expect(screen.queryByText("Tu carrito está vacío.")).not.toBeInTheDocument();
+  });
+
+  test("muestra el total del producto agregado", async () => {
+    const usuario = userEvent.setup();
+    renderizarTienda();
+
+    await usuario.click(screen.getAllByRole("button", { name: "Agregar" })[0]);
+
+    expect(screen.getByText(`Total: ${formatearPrecio(productos[0].precio)}`)).toBeInTheDocument();
   });
 
   test("agregar el mismo producto dos veces suma la cantidad (no duplica la fila)", async () => {
