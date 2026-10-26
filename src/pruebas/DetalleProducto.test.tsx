@@ -4,6 +4,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { CarritoProvider } from "../contexto/CarritoContext";
 import DetalleProducto from "../paginas/DetalleProducto";
 import { productos } from "../datos/productos";
+import { formatearPrecio } from "../utilidades/formato";
 
 // Montamos la ruta dinámica real (/producto/:id) y "visitamos" una URL concreta.
 function visitar(url: string) {
@@ -25,6 +26,14 @@ describe("DetalleProducto", () => {
 
     expect(screen.getByRole("heading", { name: producto.nombre })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Volver al catálogo" })).toHaveAttribute("href", "/catalogo");
+  });
+
+  test("muestra el precio y el botón de agregar", () => {
+    const producto = productos[0];
+    visitar(`/producto/${producto.id}`);
+
+    expect(screen.getByText(formatearPrecio(producto.precio))).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Agregar al carrito" })).toBeInTheDocument();
   });
 
   test("si el id no existe muestra un mensaje", () => {
