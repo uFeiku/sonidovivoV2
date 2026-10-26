@@ -34,6 +34,11 @@ describe("correo", () => {
     expect(validarCorreo("laura@hotmail.com")).toBe("Solo se aceptan correos @duoc.cl, @profesor.duoc.cl o @gmail.com.");
     expect(validarCorreo("laura@gmail.com")).toBe("");
   });
+
+  test("acepta mayúsculas y espacios alrededor", () => {
+    expect(esCorreoValido("Laura@Gmail.com")).toBe(true);
+    expect(validarCorreo("  laura@duoc.cl  ")).toBe("");
+  });
 });
 
 describe("contraseña", () => {
@@ -84,6 +89,13 @@ describe("formularios completos", () => {
     expect(errores.nombre).toBeUndefined();
   });
 
+  test("contacto vacío devuelve error en los tres campos", () => {
+    const errores = validarContacto({ nombre: "", correo: "", comentario: "" });
+    expect(errores.nombre).toBe("El nombre es obligatorio.");
+    expect(errores.correo).toBe("El correo es obligatorio.");
+    expect(errores.comentario).toBe("El comentario es obligatorio.");
+  });
+
   test("usuario: un formulario vacío tiene error en todos los campos obligatorios", () => {
     const errores = validarUsuario({
       run: "", tipo: "", nombre: "", apellidos: "", correo: "",
@@ -110,6 +122,23 @@ describe("formularios completos", () => {
     expect(errores.precio).toBe("El precio no puede ser negativo.");
     expect(errores.stock).toBe("El stock debe ser un número entero igual o mayor a 0.");
     expect(errores.stockCritico).toBeUndefined(); // es opcional
+  });
+
+  test("producto: el código corto y la categoría vacía dan error", () => {
+    const errores = validarProducto({
+      codigo: "AB", categoria: "", nombre: "Batería", descripcion: "",
+      precio: "1000", imagen: "", stock: "1", stockCritico: "",
+    });
+    expect(errores.codigo).toBe("El código debe tener al menos 3 caracteres.");
+    expect(errores.categoria).toBe("Selecciona una categoría.");
+  });
+
+  test("producto: el stock crítico, si se ingresa, debe ser entero", () => {
+    const errores = validarProducto({
+      codigo: "GA001", categoria: "Baterías", nombre: "Batería", descripcion: "",
+      precio: "1000", imagen: "", stock: "1", stockCritico: "1.5",
+    });
+    expect(errores.stockCritico).toBe("El stock crítico debe ser un número entero igual o mayor a 0.");
   });
 });
 
