@@ -27,6 +27,17 @@ describe("FormularioLogin", () => {
     ).toBeInTheDocument();
   });
 
+  test("rechaza una contraseña de menos de 4 caracteres", async () => {
+    const usuario = userEvent.setup();
+    render(<FormularioLogin />);
+
+    await usuario.type(screen.getByLabelText("Correo"), "laura@duoc.cl");
+    await usuario.type(screen.getByLabelText("Contraseña"), "123");
+    await usuario.click(screen.getByRole("button", { name: "Ingresar" }));
+
+    expect(screen.getByText("La contraseña debe tener entre 4 y 10 caracteres.")).toBeInTheDocument();
+  });
+
   test("con datos correctos muestra el mensaje de bienvenida", async () => {
     const usuario = userEvent.setup();
     render(<FormularioLogin />);
