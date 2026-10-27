@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { productos } from "../datos/productos";
 import { usuariosEjemplo } from "../datos/usuarios";
 import {
@@ -21,6 +21,10 @@ beforeEach(() => {
   localStorage.clear();
 });
 
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 describe("repositorio de productos", () => {
   test("sin datos guardados lista la semilla y no la modifica", () => {
     const largoSemilla = productos.length;
@@ -31,6 +35,10 @@ describe("repositorio de productos", () => {
   });
 
   test("crear, leer, actualizar y eliminar un producto", () => {
+    // El repositorio es el único que habla con localStorage: el espía lo comprueba.
+    // getItem y setItem están en el prototipo. El objeto localStorage no deja reemplazarlos.
+    const leer = vi.spyOn(Storage.prototype, "getItem");
+    const guardar = vi.spyOn(Storage.prototype, "setItem");
     const semilla = productos[0];
     const nuevo = crearProducto({
       codigo: "ZZ999",
@@ -46,18 +54,27 @@ describe("repositorio de productos", () => {
     });
 
     expect(nuevo.id).toBe(Math.max(...productos.map((producto) => producto.id)) + 1);
-    expect(obtenerProducto(nuevo.id)?.nombre).toBe("Producto de prueba");
-    expect(listarProductos()).toHaveLength(productos.length + 1);
-    expect(JSON.parse(localStorage.getItem(CLAVE_PRODUCTOS) ?? "[]")).toHaveLength(productos.length + 1);
+    expect(guardar).toHaveBeenCalledWith(CLAVE_PRODUCTOS, expect.stringContaining("Producto de prueba"));
 
+    leer.mockClear();
+    expect(obtenerProducto(nuevo.id)?.nombre).toBe("Producto de prueba");
+    expect(leer).toHaveBeenCalledWith(CLAVE_PRODUCTOS);
+    expect(listarProductos()).toHaveLength(productos.length + 1);
+
+    guardar.mockClear();
     const actualizado = actualizarProducto(nuevo.id, { nombre: "Producto editado", precio: 1000 });
     expect(actualizado?.nombre).toBe("Producto editado");
     expect(actualizado?.id).toBe(nuevo.id);
     expect(obtenerProducto(nuevo.id)?.precio).toBe(1000);
+    expect(guardar).toHaveBeenCalledWith(CLAVE_PRODUCTOS, expect.stringContaining("Producto editado"));
 
+    guardar.mockClear();
     eliminarProducto(nuevo.id);
     expect(obtenerProducto(nuevo.id)).toBeUndefined();
     expect(listarProductos()).toHaveLength(productos.length);
+    const ultimaEscritura = guardar.mock.calls[guardar.mock.calls.length - 1];
+    expect(ultimaEscritura?.[0]).toBe(CLAVE_PRODUCTOS);
+    expect(JSON.parse(String(ultimaEscritura?.[1]))).toHaveLength(productos.length);
   });
 
   test("actualizar o eliminar un id que no existe no rompe la lista", () => {
