@@ -4,7 +4,7 @@ import CampoSelect from "../moleculas/CampoSelect";
 import Boton from "../atomos/Boton";
 import { regionesChile } from "../../datos/regiones";
 import { validarUsuario, hayErrores, type DatosUsuario, type Errores } from "../../utilidades/validaciones";
-import type { TipoUsuario } from "../../tipos";
+import type { TipoUsuario, UsuarioAdmin } from "../../tipos";
 
 // Este mismo organismo sirve para el Registro (solo "Cliente") y para el panel Admin (los 3 tipos).
 interface FormularioUsuarioProps {
@@ -12,20 +12,41 @@ interface FormularioUsuarioProps {
   tipoInicial?: TipoUsuario;
   textoBoton: string;
   mostrarLimpiar?: boolean;
+  // Si viene un usuario, el formulario se abre con sus datos (modo "Editar" del admin).
+  usuario?: UsuarioAdmin | null;
+  // En edición el RUN no cambia: es la clave del registro.
+  bloquearRun?: boolean;
+  // Si la página lo pasa, Guardar escribe en el repositorio. Si no, sigue siendo simulación (registro público).
+  // Devuelve un mensaje si no se pudo guardar (por ejemplo, RUN repetido).
+  onGuardar?: (datos: DatosUsuario) => string | void;
+  onLimpiar?: () => void;
 }
 
-function FormularioUsuario({ tiposPermitidos, tipoInicial, textoBoton, mostrarLimpiar = false }: FormularioUsuarioProps) {
-  const datosIniciales: DatosUsuario = {
-    run: "",
-    tipo: tipoInicial ?? "",
-    nombre: "",
-    apellidos: "",
-    correo: "",
-    fechaNacimiento: "",
-    region: "",
-    comuna: "",
-    direccion: "",
+function datosDesdeUsuario(usuario?: UsuarioAdmin | null, tipoInicial?: TipoUsuario): DatosUsuario {
+  return {
+    run: usuario?.run ?? "",
+    tipo: usuario?.tipo ?? tipoInicial ?? "",
+    nombre: usuario?.nombre ?? "",
+    apellidos: usuario?.apellidos ?? "",
+    correo: usuario?.correo ?? "",
+    fechaNacimiento: usuario?.fechaNacimiento ?? "",
+    region: usuario?.region ?? "",
+    comuna: usuario?.comuna ?? "",
+    direccion: usuario?.direccion ?? "",
   };
+}
+
+function FormularioUsuario({
+  tiposPermitidos,
+  tipoInicial,
+  textoBoton,
+  mostrarLimpiar = false,
+  usuario = null,
+  bloquearRun = false,
+  onGuardar,
+  onLimpiar,
+}: FormularioUsuarioProps) {
+  const datosIniciales: DatosUsuario = datosDesdeUsuario(usuario, tipoInicial);
 
   const [datos, setDatos] = useState<DatosUsuario>(datosIniciales);
   const [errores, setErrores] = useState<Errores<DatosUsuario>>({});
@@ -49,21 +70,30 @@ function FormularioUsuario({ tiposPermitidos, tipoInicial, textoBoton, mostrarLi
   const manejarEnvio = (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault();
     const nuevosErrores = validarUsuario(datos);
+    if (!hayErrores(nuevosErrores) && onGuardar) {
+      const mensaje = onGuardar(datos);
+      if (mensaje) {
+        setErrores({ ...nuevosErrores, run: mensaje });
+        setExito(false);
+        return;
+      }
+    }
     setErrores(nuevosErrores);
     setExito(!hayErrores(nuevosErrores));
   };
 
   const limpiar = () => {
-    setDatos(datosIniciales);
+    setDatos(datosDesdeUsuario(null, tipoInicial));
     setErrores({});
     setExito(false);
+    onLimpiar?.();
   };
 
   return (
     <form onSubmit={manejarEnvio} noValidate>
       {exito && (
         <div className="alert alert-success" role="alert">
-          Usuario guardado correctamente (simulación).
+          {onGuardar ? "Usuario guardado correctamente." : "Usuario guardado correctamente (simulación)."}
         </div>
       )}
 
@@ -78,6 +108,7 @@ function FormularioUsuario({ tiposPermitidos, tipoInicial, textoBoton, mostrarLi
             error={errores.run}
             placeholder="Ej: 123456785"
             maxLength={10}
+            deshabilitado={bloquearRun}
           />
         </div>
         <div className="col-md-6">

@@ -80,7 +80,8 @@ describe("repositorio de productos", () => {
 describe("repositorio de usuarios", () => {
   test("sin datos guardados lista la semilla", () => {
     expect(listarUsuarios()).toHaveLength(usuariosEjemplo.length);
-    expect(obtenerUsuario("123456785")?.nombre).toBe("Juan González");
+    expect(obtenerUsuario("123456785")?.nombre).toBe("Juan");
+    expect(obtenerUsuario("123456785")?.apellidos).toBe("González");
   });
 
   test("crear, leer, actualizar y eliminar un usuario", () => {

@@ -16,9 +16,10 @@ interface CampoFormularioProps {
   maxLength?: number;
   min?: number;
   step?: number | string;
+  deshabilitado?: boolean;
 }
 
-function CampoFormulario({ id, etiqueta, nombre, tipo, valor, onChange, error, placeholder, maxLength, min, step }: CampoFormularioProps) {
+function CampoFormulario({ id, etiqueta, nombre, tipo, valor, onChange, error, placeholder, maxLength, min, step, deshabilitado }: CampoFormularioProps) {
   return (
     <div className="mb-3">
       <Etiqueta paraId={id} texto={etiqueta} />
@@ -32,6 +33,7 @@ function CampoFormulario({ id, etiqueta, nombre, tipo, valor, onChange, error, p
         maxLength={maxLength}
         min={min}
         step={step}
+        deshabilitado={deshabilitado}
         invalido={Boolean(error)}
       />
       <MensajeError id={`error-${id}`} mensaje={error} />

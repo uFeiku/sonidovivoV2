@@ -43,10 +43,13 @@ export type TipoUsuario = "Administrador" | "Vendedor" | "Cliente";
 export interface UsuarioAdmin {
   run: string;
   nombre: string;
+  apellidos?: string; // el formulario los pide; la semilla antigua no los trae
   correo: string;
   tipo: TipoUsuario;
   region: string;
   comuna: string;
+  fechaNacimiento?: string;
+  direccion?: string;
 }
 
 /** Variantes de color de Bootstrap que usan nuestros botones */

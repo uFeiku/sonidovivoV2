@@ -10,6 +10,9 @@ import type { Producto } from "../../tipos";
 interface FormularioProductoProps {
   // Si viene un producto, el formulario se abre con sus datos cargados (modo "Editar").
   producto?: Producto | null;
+  // La página lo usa para crear o actualizar en el repositorio.
+  onGuardar: (datos: DatosProducto) => void;
+  onLimpiar?: () => void;
 }
 
 function datosDesdeProducto(producto?: Producto | null): DatosProducto {
@@ -25,7 +28,7 @@ function datosDesdeProducto(producto?: Producto | null): DatosProducto {
   };
 }
 
-function FormularioProducto({ producto }: FormularioProductoProps) {
+function FormularioProducto({ producto, onGuardar, onLimpiar }: FormularioProductoProps) {
   const [datos, setDatos] = useState<DatosProducto>(() => datosDesdeProducto(producto));
   const [errores, setErrores] = useState<Errores<DatosProducto>>({});
   const [exito, setExito] = useState(false);
@@ -40,20 +43,26 @@ function FormularioProducto({ producto }: FormularioProductoProps) {
     evento.preventDefault();
     const nuevosErrores = validarProducto(datos);
     setErrores(nuevosErrores);
-    setExito(!hayErrores(nuevosErrores));
+    if (hayErrores(nuevosErrores)) {
+      setExito(false);
+      return;
+    }
+    onGuardar(datos);
+    setExito(true);
   };
 
   const limpiar = () => {
     setDatos(datosDesdeProducto(null));
     setErrores({});
     setExito(false);
+    onLimpiar?.(); // la página olvida el id: el próximo Guardar crea uno nuevo
   };
 
   return (
     <form onSubmit={manejarEnvio} noValidate>
       {exito && (
         <div className="alert alert-success" role="alert">
-          Producto guardado correctamente (simulación).
+          Producto guardado correctamente.
         </div>
       )}
 

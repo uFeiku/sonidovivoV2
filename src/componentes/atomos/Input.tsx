@@ -9,11 +9,12 @@ interface InputProps {
   placeholder?: string;
   maxLength?: number;
   invalido?: boolean;
+  deshabilitado?: boolean;
   min?: number;
   step?: number | string;
 }
 
-function Input({ id, nombre, tipo = "text", valor, onChange, placeholder, maxLength, invalido = false, min, step }: InputProps) {
+function Input({ id, nombre, tipo = "text", valor, onChange, placeholder, maxLength, invalido = false, deshabilitado = false, min, step }: InputProps) {
   return (
     <input
       id={id}
@@ -25,6 +26,7 @@ function Input({ id, nombre, tipo = "text", valor, onChange, placeholder, maxLen
       maxLength={maxLength}
       min={min}
       step={step}
+      disabled={deshabilitado}
       className={`form-control${invalido ? " is-invalid" : ""}`}
     />
   );

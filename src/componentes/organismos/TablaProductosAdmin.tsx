@@ -5,9 +5,10 @@ import type { Producto } from "../../tipos";
 interface TablaProductosAdminProps {
   productos: Producto[];
   onEditar: (id: number) => void;
+  onEliminar: (id: number) => void;
 }
 
-function TablaProductosAdmin({ productos, onEditar }: TablaProductosAdminProps) {
+function TablaProductosAdmin({ productos, onEditar, onEliminar }: TablaProductosAdminProps) {
   return (
     <div className="table-responsive tabla-scroll">
       <table className="table table-dark table-striped align-middle">
@@ -38,9 +39,14 @@ function TablaProductosAdmin({ productos, onEditar }: TablaProductosAdminProps) 
               <td>{formatearPrecio(producto.precio)}</td>
               <td>{producto.stock}</td>
               <td>
-                <Boton variante="secondary" pequeno onClick={() => onEditar(producto.id)}>
-                  Editar
-                </Boton>
+                <div className="d-flex flex-wrap gap-2">
+                  <Boton variante="secondary" pequeno onClick={() => onEditar(producto.id)}>
+                    Editar
+                  </Boton>
+                  <Boton variante="danger" pequeno onClick={() => onEliminar(producto.id)}>
+                    Eliminar
+                  </Boton>
+                </div>
               </td>
             </tr>
           ))}
